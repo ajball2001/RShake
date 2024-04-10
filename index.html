@@ -51,7 +51,7 @@
                     var xml = parser.parseFromString(text, 'application/xml');
                     var blobs = xml.getElementsByTagName('Blob');
                     for (var i = 0; i < blobs.length; i++) {
-                        var url = 'https://<storage_account_name>.blob.core.windows.net/rshakeimagescontainer/' + blobs[i].getElementsByTagName('Name')[0].textContent;
+                        var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + blobs[i].getElementsByTagName('Name')[0].textContent;
                         images.push(url);
                     }
 
