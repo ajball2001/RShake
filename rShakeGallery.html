@@ -41,10 +41,8 @@
     </div>
 
     <script>
-        var images = []; // Array to store image URLs
-        var currentIndex = 0; // Current index of displayed image
-
-        // Function to fetch images from the server and populate the gallery
+        var images = [];
+        var currentIndex = 0;
         function populateGallery() {
             fetch('/images')
                 .then(response => response.text())
@@ -61,33 +59,23 @@
                 })
                 .catch(error => console.error('Error fetching images:', error));
         }
-
-        // Function to display the current image
         function displayImage() {
             var currentImage = document.getElementById('currentImage');
             currentImage.src = '/images/' + images[currentIndex];
         }
-
-        // Function to navigate to the previous image
         function prevImage() {
             if (currentIndex > 0) {
                 currentIndex--;
                 displayImage();
             }
         }
-
-        // Function to navigate to the next image
         function nextImage() {            
                 if (currentIndex < images.length - 1 && currentIndex < 5) { // Limi>
                 currentIndex++;
                 displayImage();
             }
         }
-
-        // Call the function to populate the gallery when the page loads
         populateGallery();
-
-        // Add event listeners to navigation buttons
         document.getElementById('prevBtn').addEventListener('click', prevImage);
         document.getElementById('nextBtn').addEventListener('click', nextImage);
     </script>
