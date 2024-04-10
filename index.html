@@ -83,7 +83,12 @@
             var hour = dateTimeStr.substring(14, 16);
             var minute = dateTimeStr.substring(16, 18);
             var second = dateTimeStr.substring(18, 20);
-            imageDateTime.textContent = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + hour + ':' + minute + ':' + second;
+
+            // Convert hour to 12-hour format and add AM/PM indicator
+            var ampm = (hour >= 12) ? 'PM' : 'AM';
+            hour = (hour % 12) || 12;
+
+            imageDateTime.textContent = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + hour + ':' + minute + ':' + second + ' ' + ampm;
         }
 
         function prevImage() {
@@ -106,9 +111,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
