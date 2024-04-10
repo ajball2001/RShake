@@ -44,16 +44,16 @@
         var images = [];
         var currentIndex = 0;
         function populateGallery() {
-            fetch('/images')
+            fetch('https://rshakeimages.blob.core.windows.net/rshakeimagescontainer?restype=container&comp=list')
                 .then(response => response.text())
                 .then(text => {
                     var parser = new DOMParser();
-                    var htmlDoc = parser.parseFromString(text, 'text/html');
-                    var imageLinks = Array.from(htmlDoc.querySelectorAll('a'))
-                        .map(link => link.getAttribute('href'))
-                        .filter(href => href.endsWith('.png')); // Filter only >
-
-                    images = imageLinks.reverse(); // Reverse the array to show>
+                    var xml = parser.parseFromString(text, 'application/xml');
+                    var blobs = xml.getElementsByTagName('Blob');
+                    for (var i = 0; i < blobs.length; i++) {
+                        var url = 'https://<storage_account_name>.blob.core.windows.net/rshakeimagescontainer/' + blobs[i].getElementsByTagName('Name')[0].textContent;
+                        images.push(url);
+                    }
 
                     displayImage();
                 })
