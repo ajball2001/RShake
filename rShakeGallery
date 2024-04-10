@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        .gallery {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Adjust height as needed */
+            margin-top: 5vh;
+            margin-bottom:5vh;
+        }
+        .gallery img {
+            max-width: 90%;
+            max-height: 90vh;
+            height: auto;
+        }
+        #prevBtn, #nextBtn {
+            cursor: pointer;
+            font-size: 24px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #prevBtn {
+            left: 10px;
+        }
+        #nextBtn {
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        <img id="currentImage" src="" alt="Current Image">
+        <span id="prevBtn">&lt;</span>
+        <span id="nextBtn">&gt;</span>
+    </div>
+
+    <script>
+        var images = []; // Array to store image URLs
+        var currentIndex = 0; // Current index of displayed image
+
+        // Function to fetch images from the server and populate the gallery
+        function populateGallery() {
+            fetch('/images')
+                .then(response => response.text())
+                .then(text => {
+                    var parser = new DOMParser();
+                    var htmlDoc = parser.parseFromString(text, 'text/html');
+                    var imageLinks = Array.from(htmlDoc.querySelectorAll('a'))
+                        .map(link => link.getAttribute('href'))
+                        .filter(href => href.endsWith('.png')); // Filter only >
+
+                    images = imageLinks.reverse(); // Reverse the array to show>
+
+                    displayImage();
+                })
+                .catch(error => console.error('Error fetching images:', error));
+        }
+
+        // Function to display the current image
+        function displayImage() {
+            var currentImage = document.getElementById('currentImage');
+            currentImage.src = '/images/' + images[currentIndex];
+        }
+
+        // Function to navigate to the previous image
+        function prevImage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayImage();
+            }
+        }
+
+        // Function to navigate to the next image
+        function nextImage() {            
+                if (currentIndex < images.length - 1 && currentIndex < 5) { // Limi>
+                currentIndex++;
+                displayImage();
+            }
+        }
+
+        // Call the function to populate the gallery when the page loads
+        populateGallery();
+
+        // Add event listeners to navigation buttons
+        document.getElementById('prevBtn').addEventListener('click', prevImage);
+        document.getElementById('nextBtn').addEventListener('click', nextImage);
+    </script>
+</body>
+</html>
+
+
+
+
+
