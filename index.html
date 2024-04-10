@@ -100,6 +100,10 @@
                 cstHour = (utcDate.getUTCHours() + 24 - 6) % 24; // Adjust for 24-hour format
             }
 
+            // Adjust AM/PM indicator based on 12-hour format
+            ampm = (cstHour >= 12) ? 'PM' : 'AM';
+            cstHour = (cstHour % 12) || 12;
+
             imageDateTime.textContent = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + cstHour + ':' + minute + ':' + second + ' ' + ampm;
         }
 
