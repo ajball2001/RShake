@@ -61,7 +61,7 @@
         }
         function displayImage() {
             var currentImage = document.getElementById('currentImage');
-            currentImage.src = '/images/' + images[currentIndex];
+            currentImage.src = images[currentIndex];
         }
         function prevImage() {
             if (currentIndex > 0) {
@@ -70,7 +70,7 @@
             }
         }
         function nextImage() {            
-                if (currentIndex < images.length - 1 && currentIndex < 5) { // Limi>
+                if (currentIndex < images.length - 1 && currentIndex < 5) {
                 currentIndex++;
                 displayImage();
             }
