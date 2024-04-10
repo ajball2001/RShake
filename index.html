@@ -80,7 +80,7 @@
             var timeUtc = dateTimeStr.slice(9); // Extract time in UTC
             var dateUtc = new Date(Date.UTC(year, month - 1, day, timeUtc.slice(0, 2), timeUtc.slice(2, 4), timeUtc.slice(4, 6)));
             var dateCst = new Date(dateUtc.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-            return dateCst.toLocaleString();
+            return `${dateCst.toLocaleDateString()} ${dateCst.toLocaleTimeString()}`;
         }
 
         function displayImage() {
