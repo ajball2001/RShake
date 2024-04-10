@@ -17,13 +17,6 @@
             max-width: 90%;
             max-height: 90vh;
             height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-        .image-info {
-            text-align: center;
-            font-size: 14px;
-            margin-top: 10px;
         }
         #prevBtn, #nextBtn {
             cursor: pointer;
@@ -43,43 +36,31 @@
 <body>
     <div class="gallery">
         <img id="currentImage" src="" alt="Current Image">
-        <div class="image-info" id="imageInfo"></div>
         <span id="prevBtn">&lt;</span>
         <span id="nextBtn">&gt;</span>
     </div>
-
     <script>
         var images = [];
-        var imageDates = [];
         var currentIndex = 0;
         function populateGallery() {
-    fetch('https://rshakeimages.blob.core.windows.net/rshakeimagescontainer?restype=container&comp=list')
-        .then(response => response.text())
-        .then(text => {
-            var parser = new DOMParser();
-            var xml = parser.parseFromString(text, 'application/xml');
-            var blobs = xml.getElementsByTagName('Blob');
-            for (var i = 0; i < blobs.length; i++) {
-                var nameElement = blobs[i].getElementsByTagName('Name')[0];
-                var lastModifiedElement = blobs[i].getElementsByTagName('LastModified')[0];
-                if (nameElement && lastModifiedElement) {
-                    var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + nameElement.textContent;
-                    images.push(url);
-                    imageDates.push(lastModifiedElement.textContent);
-                } else {
-                    console.error('Missing expected elements in XML response:', blobs[i]);
-                }
-            }
-            displayImage();
-        })
-        .catch(error => console.error('Error fetching images:', error));
-}
-
+            fetch('https://rshakeimages.blob.core.windows.net/rshakeimagescontainer?restype=container&comp=list')
+                .then(response => response.text())
+                .then(text => {
+                    var parser = new DOMParser();
+                    var xml = parser.parseFromString(text, 'application/xml');
+                    var blobs = xml.getElementsByTagName('Blob');
+                    for (var i = 0; i < blobs.length; i++) {
+                        var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + blobs[i].getElementsByTagName('Name')[0].textContent;
+                        images.push(url);
+                    }
+                    displayImage();
+                })
+                .catch(error => console.error('Error fetching images:', error));
+        }
         function displayImage() {
             var currentImage = document.getElementById('currentImage');
-            var imageInfo = document.getElementById('imageInfo');
+            currentImage.src = '/images/' + images[currentIndex];
             currentImage.src = images[currentIndex];
-            imageInfo.textContent = 'Date Taken: ' + imageDates[currentIndex];
         }
         function prevImage() {
             if (currentIndex > 0) {
@@ -89,6 +70,7 @@
         }
         function nextImage() {            
                 if (currentIndex < images.length - 1 && currentIndex < 5) { // Limi>
+                if (currentIndex < images.length - 1 && currentIndex < 5) {
                 currentIndex++;
                 displayImage();
             }
