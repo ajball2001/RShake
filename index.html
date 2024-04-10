@@ -88,7 +88,19 @@
             var ampm = (hour >= 12) ? 'PM' : 'AM';
             hour = (hour % 12) || 12;
 
-            imageDateTime.textContent = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + hour + ':' + minute + ':' + second + ' ' + ampm;
+            // Convert UTC to CST (Central Standard Time) by subtracting 6 hours
+            var cstHour = parseInt(hour) - 6;
+            if (cstHour < 0) {
+                // Adjust for previous day if the hour is negative
+                var utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+                utcDate.setDate(utcDate.getDate() - 1); // Subtract one day
+                year = utcDate.getUTCFullYear();
+                month = (utcDate.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is zero-based
+                day = utcDate.getUTCDate().toString().padStart(2, '0');
+                cstHour = (utcDate.getUTCHours() + 24 - 6) % 24; // Adjust for 24-hour format
+            }
+
+            imageDateTime.textContent = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + cstHour + ':' + minute + ':' + second + ' ' + ampm;
         }
 
         function prevImage() {
