@@ -12,11 +12,16 @@
             height: 100vh; /* Adjust height as needed */
             margin-top: 5vh;
             margin-bottom:5vh;
+            flex-direction: column;
         }
         .gallery img {
             max-width: 90%;
-            max-height: 90vh;
+            max-height: 70vh;
             height: auto;
+        }
+        .image-info {
+            margin-top: 10px;
+            font-size: 16px;
         }
         #prevBtn, #nextBtn {
             cursor: pointer;
@@ -35,6 +40,7 @@
 </head>
 <body>
     <div class="gallery">
+        <span class="image-info" id="imageDateTime"></span>
         <img id="currentImage" src="" alt="Current Image">
         <span id="prevBtn">&lt;</span>
         <span id="nextBtn">&gt;</span>
@@ -43,6 +49,7 @@
     <script>
         var images = [];
         var currentIndex = 0;
+
         function populateGallery() {
             fetch('https://rshakeimages.blob.core.windows.net/rshakeimagescontainer?restype=container&comp=list')
                 .then(response => response.text())
@@ -51,36 +58,59 @@
                     var xml = parser.parseFromString(text, 'application/xml');
                     var blobs = xml.getElementsByTagName('Blob');
                     for (var i = 0; i < blobs.length; i++) {
-                        var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + blobs[i].getElementsByTagName('Name')[0].textContent;
-                        images.push(url);
+                        var nameElement = blobs[i].getElementsByTagName('Name')[0];
+                        if (nameElement) {
+                            var fileName = nameElement.textContent;
+                            var dateTime = extractDateTime(fileName);
+                            images.push({url: 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + fileName, dateTime: dateTime});
+                        } else {
+                            console.error('Missing expected elements in XML response:', blobs[i]);
+                        }
                     }
-
                     displayImage();
                 })
                 .catch(error => console.error('Error fetching images:', error));
         }
+
+        function extractDateTime(fileName) {
+            var dateTimeStr = fileName.split('-').slice(1).join('-').split('.')[0]; // Remove station code and file extension
+            var year = dateTimeStr.slice(0, 4);
+            var month = dateTimeStr.slice(4, 6);
+            var day = dateTimeStr.slice(6, 8);
+            var timeUtc = dateTimeStr.slice(9); // Extract time in UTC
+            var dateUtc = new Date(Date.UTC(year, month - 1, day, timeUtc.slice(0, 2), timeUtc.slice(2, 4), timeUtc.slice(4, 6)));
+            var dateCst = new Date(dateUtc.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+            return dateCst.toLocaleString();
+        }
+
         function displayImage() {
             var currentImage = document.getElementById('currentImage');
-            currentImage.src = images[currentIndex];
+            var imageDateTime = document.getElementById('imageDateTime');
+            currentImage.src = images[currentIndex].url;
+            imageDateTime.textContent = images[currentIndex].dateTime;
         }
+
         function prevImage() {
             if (currentIndex > 0) {
                 currentIndex--;
                 displayImage();
             }
         }
+
         function nextImage() {            
-                if (currentIndex < images.length - 1 && currentIndex < 5) {
+            if (currentIndex < images.length - 1 && currentIndex < 5) { // Limit the number of images to display
                 currentIndex++;
                 displayImage();
             }
         }
+
         populateGallery();
         document.getElementById('prevBtn').addEventListener('click', prevImage);
         document.getElementById('nextBtn').addEventListener('click', nextImage);
     </script>
 </body>
 </html>
+
 
 
 
