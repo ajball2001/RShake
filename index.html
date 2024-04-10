@@ -53,22 +53,28 @@
         var imageDates = [];
         var currentIndex = 0;
         function populateGallery() {
-            fetch('https://rshakeimages.blob.core.windows.net/rshakeimagescontainer?restype=container&comp=list')
-                .then(response => response.text())
-                .then(text => {
-                    var parser = new DOMParser();
-                    var xml = parser.parseFromString(text, 'application/xml');
-                    var blobs = xml.getElementsByTagName('Blob');
-                    for (var i = 0; i < blobs.length; i++) {
-                        var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + blobs[i].getElementsByTagName('Name')[0].textContent;
-                        images.push(url);
-                        imageDates.push(blobs[i].getElementsByTagName('LastModified')[0].textContent);
-                    }
+    fetch('https://rshakeimages.blob.core.windows.net/rshakeimagescontainer?restype=container&comp=list')
+        .then(response => response.text())
+        .then(text => {
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, 'application/xml');
+            var blobs = xml.getElementsByTagName('Blob');
+            for (var i = 0; i < blobs.length; i++) {
+                var nameElement = blobs[i].getElementsByTagName('Name')[0];
+                var lastModifiedElement = blobs[i].getElementsByTagName('LastModified')[0];
+                if (nameElement && lastModifiedElement) {
+                    var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + nameElement.textContent;
+                    images.push(url);
+                    imageDates.push(lastModifiedElement.textContent);
+                } else {
+                    console.error('Missing expected elements in XML response:', blobs[i]);
+                }
+            }
+            displayImage();
+        })
+        .catch(error => console.error('Error fetching images:', error));
+}
 
-                    displayImage();
-                })
-                .catch(error => console.error('Error fetching images:', error));
-        }
         function displayImage() {
             var currentImage = document.getElementById('currentImage');
             var imageInfo = document.getElementById('imageInfo');
