@@ -39,6 +39,7 @@
         <span id="prevBtn">&lt;</span>
         <span id="nextBtn">&gt;</span>
     </div>
+
     <script>
         var images = [];
         var currentIndex = 0;
@@ -53,13 +54,13 @@
                         var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + blobs[i].getElementsByTagName('Name')[0].textContent;
                         images.push(url);
                     }
+
                     displayImage();
                 })
                 .catch(error => console.error('Error fetching images:', error));
         }
         function displayImage() {
             var currentImage = document.getElementById('currentImage');
-            currentImage.src = '/images/' + images[currentIndex];
             currentImage.src = images[currentIndex];
         }
         function prevImage() {
@@ -69,7 +70,6 @@
             }
         }
         function nextImage() {            
-                if (currentIndex < images.length - 1 && currentIndex < 5) { // Limi>
                 if (currentIndex < images.length - 1 && currentIndex < 5) {
                 currentIndex++;
                 displayImage();
@@ -81,7 +81,6 @@
     </script>
 </body>
 </html>
-
 
 
 
