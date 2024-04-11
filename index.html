@@ -85,9 +85,11 @@
             var minute = dateTimeStr.substring(13, 15);
             var second = dateTimeStr.substring(15, 17);
 
-            // Convert hour to 12-hour format and add AM/PM indicator
-            var ampm = (hour >= 12) ? 'PM' : 'AM';
-            hour = (hour % 12) || 12;
+            var ampm = 'AM';
+            if (cstHour >= 12) {
+                ampm = 'PM';
+            cstHour = cstHour % 12 || 12;
+            }
 
             // Convert UTC to CST (Central Standard Time) by subtracting 6 hours
             var cstHour = parseInt(hour) - 6;
