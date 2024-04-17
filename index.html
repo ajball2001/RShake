@@ -36,17 +36,12 @@
         #nextBtn {
             right: 10px;
         }
-        .image-links {
-            margin-top: 10px;
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
     <div class="gallery">
         <span class="image-info" id="imageDateTime"></span>
         <img id="currentImage" src="" alt="Current Image">
-        <span class="image-links" id="imageLinks"></span>
         <span id="prevBtn">&lt;</span>
         <span id="nextBtn">&gt;</span>
     </div>
@@ -72,15 +67,14 @@
                         }
                     }
                     images.reverse();
-                    displayImages();
+                    displayImage();
                 })
                 .catch(error => console.error('Error fetching images:', error));
         }
 
-        function displayImages() {
+        function displayImage() {
             var currentImage = document.getElementById('currentImage');
             var imageDateTime = document.getElementById('imageDateTime');
-            var imageLinks = document.getElementById('imageLinks');
             currentImage.src = images[currentIndex].url;
             var fileName = images[currentIndex].url.split('/').pop();
             var dateTimeStr = fileName.split('-').slice(1).join('-').split('.')[0]; // Remove file extension
@@ -92,13 +86,13 @@
             var second = dateTimeStr.substring(15, 17);
 
             var ampm = 'AM';
-            var cstHour = parseInt(hour) - 6;
             if (cstHour >= 12) {
                 ampm = 'PM';
-                cstHour = cstHour % 12 || 12;
+            cstHour = cstHour % 12 || 12;
             }
 
             // Convert UTC to CST (Central Standard Time) by subtracting 6 hours
+            var cstHour = parseInt(hour) - 6;
             if (cstHour < 0) {
                 // Adjust for previous day if the hour is negative
                 var utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
@@ -114,52 +108,19 @@
             cstHour = (cstHour % 12) || 12;
 
             imageDateTime.textContent = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + cstHour + ':' + minute + ':' + second + ' ' + ampm;
-
-            // Display image links
-            var linkHTML = '';
-            for (var i = 0; i < images.length; i++) {
-                if (i !== currentIndex) {
-                    var linkFileName = images[i].url.split('/').pop();
-                    var linkDateTimeStr = linkFileName.split('-').slice(1).join('-').split('.')[0]; // Remove file extension
-                    var linkYear = linkDateTimeStr.substring(0, 4);
-                    var linkMonth = linkDateTimeStr.substring(5, 7);
-                    var linkDay = linkDateTimeStr.substring(8, 10);
-                    var linkHour = linkDateTimeStr.substring(11, 13);
-                    var linkMinute = linkDateTimeStr.substring(13, 15);
-                    var linkSecond = linkDateTimeStr.substring(15, 17);
-
-                    var linkCstHour = parseInt(linkHour) - 6;
-                    if (linkCstHour < 0) {
-                        // Adjust for previous day if the hour is negative
-                        var linkUtcDate = new Date(Date.UTC(linkYear, linkMonth - 1, linkDay, linkHour, linkMinute, linkSecond));
-                        linkUtcDate.setDate(linkUtcDate.getDate() - 1); // Subtract one day
-                        linkYear = linkUtcDate.getUTCFullYear();
-                        linkMonth = (linkUtcDate.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is zero-based
-                        linkDay = linkUtcDate.getUTCDate().toString().padStart(2, '0');
-                        linkCstHour = (linkUtcDate.getUTCHours() + 24 - 6) % 24; // Adjust for 24-hour format
-                    }
-
-                    // Adjust AM/PM indicator based on 12-hour format
-                    var linkAmpm = (linkCstHour >= 12) ? 'PM' : 'AM';
-                    linkCstHour = (linkCstHour % 12) || 12;
-
-                    linkHTML += '<a href="' + images[i].url + '" target="_blank">Date: ' + linkMonth + '/' + linkDay + '/' + linkYear + ', Time: ' + linkCstHour + ':' + linkMinute + ':' + linkSecond + ' ' + linkAmpm + '</a><br>';
-                }
-            }
-            imageLinks.innerHTML = linkHTML;
         }
 
         function prevImage() {
             if (currentIndex > 0) {
                 currentIndex--;
-                displayImages();
+                displayImage();
             }
         }
 
         function nextImage() {            
             if (currentIndex < images.length - 1 && currentIndex < 5) { // Limit the number of images to display
                 currentIndex++;
-                displayImages();
+                displayImage();
             }
         }
 
