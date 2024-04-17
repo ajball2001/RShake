@@ -16,6 +16,7 @@
 <body>
     <h1>Image Links</h1>
     <div id="imageLinks">
+        <!-- Image links will be added here dynamically -->
     </div>
     <button onclick="goToGallery()">Go back to Image Gallery</button>
 
@@ -49,7 +50,8 @@
                             var link = document.createElement('a');
                             link.textContent = dateLabel;
                             link.href = url;
-                            link.target = '_blank';
+                            link.target = '_blank'; // Open link in a new tab
+                            link.download = ''; // Prevent default download behavior
                             listItem.appendChild(link);
                             imageLinks.appendChild(listItem);
                         } else {
@@ -64,4 +66,3 @@
     </script>
 </body>
 </html>
-
