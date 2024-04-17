@@ -64,11 +64,10 @@
                             var dateLabel = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + cstHour + ':' + minute + ':' + second + ' ' + ampm;
                             var url = 'https://rshakeimages.blob.core.windows.net/rshakeimagescontainer/' + fileName;
                             var listItem = document.createElement('div');
-                            var link = document.createElement('a');
-                            link.textContent = dateLabel;
-                            link.href = url;
-                            link.target = '_blank'; // Open link in a new tab
-                            listItem.appendChild(link);
+                            var image = document.createElement('img');
+                            image.src = url;
+                            image.alt = dateLabel;
+                            listItem.appendChild(image);
                             imageLinks.appendChild(listItem);
                         } else {
                             console.error('Missing expected elements in XML response:', blobs[i]);
