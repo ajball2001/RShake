@@ -90,12 +90,15 @@
             var hour = dateTimeStr.substring(11, 13);
             var minute = dateTimeStr.substring(13, 15);
             var second = dateTimeStr.substring(15, 17);
+
             var ampm = 'AM';
             var cstHour = parseInt(hour) - 6;
             if (cstHour >= 12) {
                 ampm = 'PM';
                 cstHour = cstHour % 12 || 12;
             }
+
+            // Convert UTC to CST (Central Standard Time) by subtracting 6 hours
             if (cstHour < 0) {
                 // Adjust for previous day if the hour is negative
                 var utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
@@ -105,36 +108,45 @@
                 day = utcDate.getUTCDate().toString().padStart(2, '0');
                 cstHour = (utcDate.getUTCHours() + 24 - 6) % 24; // Adjust for 24-hour format
             }
+
+            // Adjust AM/PM indicator based on 12-hour format
             ampm = (cstHour >= 12) ? 'PM' : 'AM';
             cstHour = (cstHour % 12) || 12;
+
             imageDateTime.textContent = 'Date: ' + month + '/' + day + '/' + year + ', Time: ' + cstHour + ':' + minute + ':' + second + ' ' + ampm;
-            var linkList = '';
+
+            // Display image links
+            var linkHTML = '';
             for (var i = 0; i < images.length; i++) {
-                var imgFileName = images[i].url.split('/').pop();
-                var imgDateTime = imgFileName.split('-').slice(1).join('-').split('.')[0]; // Remove file extension
-                var imgYear = imgDateTime.substring(0, 4);
-                var imgMonth = imgDateTime.substring(5, 7);
-                var imgDay = imgDateTime.substring(8, 10);
-                var imgHour = imgDateTime.substring(11, 13);
-                var imgMinute = imgDateTime.substring(13, 15);
-                var imgSecond = imgDateTime.substring(15, 17);
+                if (i !== currentIndex) {
+                    var linkFileName = images[i].url.split('/').pop();
+                    var linkDateTimeStr = linkFileName.split('-').slice(1).join('-').split('.')[0]; // Remove file extension
+                    var linkYear = linkDateTimeStr.substring(0, 4);
+                    var linkMonth = linkDateTimeStr.substring(5, 7);
+                    var linkDay = linkDateTimeStr.substring(8, 10);
+                    var linkHour = linkDateTimeStr.substring(11, 13);
+                    var linkMinute = linkDateTimeStr.substring(13, 15);
+                    var linkSecond = linkDateTimeStr.substring(15, 17);
 
-                var imgCstHour = parseInt(imgHour) - 6;
-                if (imgCstHour < 0) {
-                    var imgUtcDate = new Date(Date.UTC(imgYear, imgMonth - 1, imgDay, imgHour, imgMinute, imgSecond));
-                    imgUtcDate.setDate(imgUtcDate.getDate() - 1);
-                    imgYear = imgUtcDate.getUTCFullYear();
-                    imgMonth = (imgUtcDate.getUTCMonth() + 1).toString().padStart(2, '0');
-                    imgDay = imgUtcDate.getUTCDate().toString().padStart(2, '0');
-                    imgCstHour = (imgUtcDate.getUTCHours() + 24 - 6) % 24;
+                    var linkCstHour = parseInt(linkHour) - 6;
+                    if (linkCstHour < 0) {
+                        // Adjust for previous day if the hour is negative
+                        var linkUtcDate = new Date(Date.UTC(linkYear, linkMonth - 1, linkDay, linkHour, linkMinute, linkSecond));
+                        linkUtcDate.setDate(linkUtcDate.getDate() - 1); // Subtract one day
+                        linkYear = linkUtcDate.getUTCFullYear();
+                        linkMonth = (linkUtcDate.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is zero-based
+                        linkDay = linkUtcDate.getUTCDate().toString().padStart(2, '0');
+                        linkCstHour = (linkUtcDate.getUTCHours() + 24 - 6) % 24; // Adjust for 24-hour format
+                    }
+
+                    // Adjust AM/PM indicator based on 12-hour format
+                    var linkAmpm = (linkCstHour >= 12) ? 'PM' : 'AM';
+                    linkCstHour = (linkCstHour % 12) || 12;
+
+                    linkHTML += '<a href="' + images[i].url + '" target="_blank">Date: ' + linkMonth + '/' + linkDay + '/' + linkYear + ', Time: ' + linkCstHour + ':' + linkMinute + ':' + linkSecond + ' ' + linkAmpm + '</a><br>';
                 }
-
-                var imgAmPm = (imgCstHour >= 12) ? 'PM' : 'AM';
-                imgCstHour = (imgCstHour % 12) || 12;
-
-                linkList += '<a href="' + images[i].url + '" target="_blank">Date: ' + imgMonth + '/' + imgDay + '/' + imgYear + ', Time: ' + imgCstHour + ':' + imgMinute + ':' + imgSecond + ' ' + imgAmPm + '</a><br>';
             }
-            imageLinks.innerHTML = linkList;
+            imageLinks.innerHTML = linkHTML;
         }
 
         function prevImage() {
